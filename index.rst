@@ -42,8 +42,8 @@ Command Reference
 - :doc:`core:index`
 
 
-API Reference
--------------
+RFC Index
+---------
 
 - :doc:`rfc:index`
 
