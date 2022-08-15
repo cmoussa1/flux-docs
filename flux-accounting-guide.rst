@@ -4,7 +4,8 @@
 Flux-Accounting Guide
 #####################
 
-*key terms: association, bank, PriorityDecayHalfLife, PriorityUsageResetPeriod*
+*key terms: association, bank, fair-share, PriorityDecayHalfLife,
+PriorityUsageResetPeriod*
 
 The *Flux Accounting Administrator's Guide* documents relevant information for
 the administration and management of flux-accounting components alongside a
@@ -138,6 +139,36 @@ This current job usage is then added to the association's previous job usage
 stored in the flux-accounting database. This sum then represents the
 association's overall job usage.
 
+****************************
+Multi-factor Priority Plugin
+****************************
+
+When flux-accounting is installed alongside a system instance of Flux, a
+jobtap plugin can be loaded to calculate integer job priorities. It does so
+using a multi-factor priority calculation, considering different factors and 
+their associated weights to generate a priority value. The current
+factors used to assist in calculating a job's priority are:
+
+* fair-share: an association's fair-share value
+* urgency: a self-assigned integer that associations can use to decrease the
+  priority of their job (accepted values: 1 - 16)
+
+
+Each factor has an associated weight to cater towards a more dominant factor;
+currently, the dominant factor is fair-share, but as more factors are added,
+support will also be added to configure the weight associated with each factor
+so that admins can have the flexibility to configure what factors to consider
+heavier than others.
+
+A job's priority will then be the weighted sum of all the factors in the
+multi-factor priority plugin:
+
+.. code-block:: c++
+
+ priority = (fshare_weight * fshare_factor) +
+            (urgency - 16);
+
+
 ********
 Glossary
 ********
@@ -147,6 +178,10 @@ association
 
 bank
   An account that contains associations.
+
+fair-share
+  The ratio between the amount of resources an association was allocated and
+  the amount of resources the association has actually used
 
 PriorityDecayHalfLife
   A parameter used in job usage factor calculation for associations that
